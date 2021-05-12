@@ -4,17 +4,18 @@ import {
   SafeAreaView,
   View,
   Text,
-  Image,
   TouchableOpacity,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { COLORS } from "../constants/colors";
+import * as Animatable from "react-native-animatable";
 
 const Onboarding = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Image
+        <Animatable.Image
+          animation="bounce"
           source={{
             uri:
               "https://www.transparentpng.com/thumb/technology/technology-simple-17.png",
@@ -29,7 +30,8 @@ const Onboarding = ({ navigation }) => {
 
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <View style={{ alignItems: "center", marginHorizontal: 12 }}>
-          <Text
+          <Animatable.Text
+            animation="flash"
             style={{
               fontFamily: "OpenSansCondensed-Light",
               fontSize: 25,
@@ -37,8 +39,9 @@ const Onboarding = ({ navigation }) => {
             }}
           >
             Codepedia
-          </Text>
-          <Text
+          </Animatable.Text>
+          <Animatable.Text
+            animation="bounceInRight"
             style={{
               color: "#000",
               marginTop: 23,
@@ -48,8 +51,8 @@ const Onboarding = ({ navigation }) => {
             }}
           >
             Easy solution to all your tech carrer questions. Codepedia is a
-            platform for execellence in the tech industry
-          </Text>
+            platform for execellence in the tech industryyatn
+          </Animatable.Text>
         </View>
 
         <TouchableOpacity
