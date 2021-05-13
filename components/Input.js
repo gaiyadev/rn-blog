@@ -19,7 +19,6 @@ const Input = forwardRef((props, ref) => {
     onPress,
   } = props;
   const [focused, setFocus] = useState(false);
-  const { colors } = props.theme;
 
   return (
     <TextInput

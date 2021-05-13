@@ -12,10 +12,11 @@ import { COLORS } from "../constants/colors";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import * as Animatable from "react-native-animatable";
+import { withFormik } from "formik";
 
-const SigninScreen = ({ navigation }) => {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+const SigninScreen = (props) => {
+  const { navigation } = props;
+
   const [showPassword, setShowPassword] = useState(false);
   const passwordRef = useRef(null);
 
@@ -48,34 +49,32 @@ const SigninScreen = ({ navigation }) => {
               onSubmitEditing={() => passwordRef.current?.focus()}
               label="Email"
               name="email"
-              value={email}
               keyboardType="email-address"
               textContentType="emailAddress"
               selectionColor={COLORS.primaryColor}
-              onChangeText={(text) => setEmail(text)}
+              onChangeText={(email) => props.setFieldValue("email", email)}
               underlineColor={COLORS.primaryColor}
             />
+            <Text style={styles.errors}>{props.errors.email}</Text>
+
             <Input
               ref={passwordRef}
               label="Password"
               name="lock"
               leftIcon={showPassword ? "eye" : "eye-off"}
               onPress={() => setShowPassword(!showPassword)}
-              value={password}
               keyboardType="default"
               maxLength={10}
               minLength={6}
-              //   textContentType="emailAddress"
               selectionColor={COLORS.primaryColor}
               secureTextEntry={!showPassword}
-              onChangeText={(text) => setPassword(text)}
+              onChangeText={(password) =>
+                props.setFieldValue("password", password)
+              }
               underlineColor={COLORS.primaryColor}
             />
-            <Text>Error message here</Text>
-            <Button
-              title="Sign in"
-              onPress={() => navigation.navigate("Home")}
-            />
+            <Text style={styles.errors}>{props.errors.password}</Text>
+            <Button title="Sign in" onPress={props.handleSubmit} />
             <View>
               <TouchableOpacity
                 onPress={() => {
@@ -131,6 +130,39 @@ const styles = StyleSheet.create({
     alignContent: "center",
     // borderTopLeftRadius: 20,
   },
+  errors: {
+    fontFamily: "Karla-Regular",
+    color: "red",
+  },
 });
 
-export default SigninScreen;
+export default withFormik({
+  mapPropsToValues: () => ({
+    email: "",
+    password: "",
+  }),
+
+  validate: (values, props) => {
+    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+
+    const errors = {};
+    if (!values.email) {
+      errors.email = "Email is required";
+    } else if (!emailRegex.test(values.email)) {
+      errors.email = "Email is invalid";
+    }
+
+    // password
+    if (!values.password) {
+      errors.password = "Password is required";
+    } else if (values.password.length < 6) {
+      errors.password = "Password must be atleast 6 characters";
+    }
+    return errors;
+  },
+
+  handleSubmit: (values, { props }) => {
+    console.log(values);
+    props.navigation.navigate("Home");
+  },
+})(SigninScreen);

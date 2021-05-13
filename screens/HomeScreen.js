@@ -12,10 +12,9 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import * as Animatable from "react-native-animatable";
 import DateTimePicker from "@react-native-community/datetimepicker";
-
-const HomeScreen = ({ navigation }) => {
-  const [title, setTitle] = useState("");
-  const [body, setBody] = React.useState("");
+import { withFormik } from "formik";
+const HomeScreen = (props) => {
+  const { navigation } = props;
 
   // date picker
 
@@ -70,24 +69,25 @@ const HomeScreen = ({ navigation }) => {
               name="account"
               returnKeyType="next"
               onSubmitEditing={() => bodyRef.current?.focus()}
-              value={title}
               keyboardType="default"
               selectionColor={COLORS.primaryColor}
-              onChangeText={(text) => setTitle(text)}
+              onChangeText={(title) => props.setFieldValue("title", title)}
               underlineColor={COLORS.primaryColor}
             />
+            <Text style={styles.errors}>{props.errors.title}</Text>
+
             <Input
               label="Body"
               name="information"
               multiline={true}
               numberOfLines={4}
-              value={body}
               returnKeyType="done"
               ref={bodyRef}
               selectionColor={COLORS.primaryColor}
-              onChangeText={(text) => setBody(text)}
+              onChangeText={(body) => props.setFieldValue("body", body)}
               underlineColor={COLORS.primaryColor}
             />
+            <Text style={styles.errors}>{props.errors.body}</Text>
 
             <Button title="Add Date" onPress={showDatepicker} />
             {show && (
@@ -101,7 +101,7 @@ const HomeScreen = ({ navigation }) => {
               />
             )}
 
-            <Button title="Submit" onPress={() => console.log("d")} />
+            <Button title="Submit" onPress={props.handleSubmit} />
           </Animatable.View>
           {/*  */}
         </View>
@@ -141,6 +141,37 @@ const styles = StyleSheet.create({
     alignContent: "center",
     // borderTopLeftRadius: 20,
   },
+  errors: {
+    fontFamily: "Karla-Regular",
+    color: "red",
+  },
 });
 
-export default HomeScreen;
+export default withFormik({
+  mapPropsToValues: () => ({
+    title: "",
+    body: "",
+  }),
+
+  validate: (values, props) => {
+    const errors = {};
+    // Title validator
+    if (!values.title) {
+      errors.title = "Title is required";
+    } else if (values.title.length < 4) {
+      errors.title = "Title must be atleast 4 characters";
+    }
+
+    //Body validation
+    if (!values.body) {
+      errors.body = "Body is required";
+    } else if (values.body.length < 14) {
+      errors.body = "Body must be atleast 14 characters";
+    }
+    return errors;
+  },
+
+  handleSubmit: (values, { props }) => {
+    console.log(values.title);
+  },
+})(HomeScreen);

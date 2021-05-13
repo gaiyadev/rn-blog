@@ -11,10 +11,10 @@ import { COLORS } from "../constants/colors";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import * as Animatable from "react-native-animatable";
+import { withFormik } from "formik";
 
-const ChangePasswordScreen = ({ navigation }) => {
-  const [password, setPassword] = React.useState("");
-  const [comfirmPassword, setcomfirmPassword] = useState("");
+const ChangePasswordScreen = (props) => {
+  const { navigation } = props;
 
   const [showPassword, setShowPassword] = useState(false);
   const [showComfirmPassword, setShowComfirmPassword] = useState(false);
@@ -52,14 +52,18 @@ const ChangePasswordScreen = ({ navigation }) => {
               onSubmitEditing={() => comfirmedPasswordRef.current?.focus()}
               leftIcon={showPassword ? "eye" : "eye-off"}
               onPress={() => setShowPassword(!showPassword)}
-              value={password}
               keyboardType="default"
               textContentType="password"
               selectionColor={COLORS.primaryColor}
               secureTextEntry={!showPassword}
-              onChangeText={(text) => setPassword(text)}
+              onCha
+              onChangeText={(password) =>
+                props.setFieldValue("password", password)
+              }
+              ngeText={(text) => setPassword(text)}
               underlineColor={COLORS.primaryColor}
             />
+            <Text style={styles.errors}>{props.errors.password}</Text>
 
             <Input
               label="Comfirm Password"
@@ -67,15 +71,18 @@ const ChangePasswordScreen = ({ navigation }) => {
               ref={comfirmedPasswordRef}
               leftIcon={showComfirmPassword ? "eye" : "eye-off"}
               onPress={() => setShowComfirmPassword(!showComfirmPassword)}
-              value={comfirmPassword}
               keyboardType="default"
               //  textContentType="emailAddress"
               selectionColor={COLORS.primaryColor}
               secureTextEntry={!showComfirmPassword}
-              onChangeText={(text) => setcomfirmPassword(text)}
+              onChangeText={(comfirmPassword) =>
+                props.setFieldValue("comfirmPassword", comfirmPassword)
+              }
               underlineColor={COLORS.primaryColor}
             />
-            <Button title="Update" onPress={() => console.log("d")} />
+            <Text style={styles.errors}>{props.errors.comfirmPassword}</Text>
+
+            <Button title="Update" onPress={props.handleSubmit} />
           </Animatable.View>
           {/*  */}
         </View>
@@ -85,6 +92,10 @@ const ChangePasswordScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  errors: {
+    fontFamily: "Karla-Regular",
+    color: "red",
+  },
   main: {
     backgroundColor: COLORS.primaryColor,
     flex: 1,
@@ -117,4 +128,36 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChangePasswordScreen;
+export default withFormik({
+  mapPropsToValues: () => ({
+    password: "",
+    comfirmPassword: "",
+  }),
+  validate: (values, props) => {
+    const passwordRegex = /((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/;
+    const errors = {};
+
+    // password Validator
+    if (!values.password) {
+      errors.password = "Password is required";
+    } else if (values.password.length < 6) {
+      errors.password = "Password must be atleast 6 characters";
+    } else if (!passwordRegex.test(values.password)) {
+      errors.password =
+        "Password shold contain atleast one number and one uppercase";
+    }
+
+    // comfirm password validator
+    if (!values.comfirmPassword) {
+      errors.comfirmPassword = "Comfirm password is required";
+    } else if (values.comfirmPassword !== values.password) {
+      errors.comfirmPassword = "Password comfirmation fail";
+    }
+    return errors;
+  },
+
+  handleSubmit: (values, { props }) => {
+    console.log(values);
+    console.log(props);
+  },
+})(ChangePasswordScreen);

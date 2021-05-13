@@ -12,12 +12,10 @@ import { COLORS } from "../constants/colors";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import * as Animatable from "react-native-animatable";
+import { withFormik } from "formik";
 
-const SignupScreen = ({ navigation }) => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [comfirmPassword, setcomfirmPassword] = useState("");
+const SignupScreen = (props) => {
+  const { navigation } = props;
 
   const [showPassword, setShowPassword] = useState(false);
   const [showComfirmPassword, setShowComfirmPassword] = useState(false);
@@ -33,7 +31,7 @@ const SignupScreen = ({ navigation }) => {
       }}
       onPress={Keyboard.dismiss}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={100}
+      keyboardVerticalOffset={60}
     >
       <ScrollView style={{ flex: 1, backgroundColor: COLORS.white }}>
         <View style={styles.main}>
@@ -55,26 +53,30 @@ const SignupScreen = ({ navigation }) => {
               onSubmitEditing={() => emailRef.current?.focus()}
               label="Username"
               name="account"
-              value={username}
               keyboardType="default"
               textContentType="username"
               selectionColor={COLORS.primaryColor}
-              onChangeText={(text) => setUsername(text)}
+              onChangeText={(username) =>
+                props.setFieldValue("username", username)
+              }
               underlineColor={COLORS.primaryColor}
             />
+            <Text style={styles.errors}>{props.errors.username}</Text>
+
             <Input
               label="Email"
               ref={emailRef}
               returnKeyType="next"
               onSubmitEditing={() => passwordRef.current?.focus()}
               name="email"
-              value={email}
               keyboardType="email-address"
               textContentType="emailAddress"
               selectionColor={COLORS.primaryColor}
-              onChangeText={(text) => setEmail(text)}
+              onChangeText={(email) => props.setFieldValue("email", email)}
               underlineColor={COLORS.primaryColor}
             />
+            <Text style={styles.errors}>{props.errors.email}</Text>
+
             <Input
               label="Password"
               name="lock"
@@ -83,14 +85,16 @@ const SignupScreen = ({ navigation }) => {
               ref={passwordRef}
               leftIcon={showPassword ? "eye" : "eye-off"}
               onPress={() => setShowPassword(!showPassword)}
-              value={password}
               keyboardType="default"
               textContentType="password"
               selectionColor={COLORS.primaryColor}
               secureTextEntry={!showPassword}
-              onChangeText={(text) => setPassword(text)}
+              onChangeText={(password) =>
+                props.setFieldValue("password", password)
+              }
               underlineColor={COLORS.primaryColor}
             />
+            <Text style={styles.errors}>{props.errors.password}</Text>
 
             <Input
               ref={comfirmedPasswordRef}
@@ -98,15 +102,18 @@ const SignupScreen = ({ navigation }) => {
               name="lock"
               leftIcon={showComfirmPassword ? "eye" : "eye-off"}
               onPress={() => setShowComfirmPassword(!showComfirmPassword)}
-              value={comfirmPassword}
               keyboardType="default"
               //  textContentType="emailAddress"
               selectionColor={COLORS.primaryColor}
               secureTextEntry={!showComfirmPassword}
-              onChangeText={(text) => setcomfirmPassword(text)}
+              onChangeText={(comfirmPassword) =>
+                props.setFieldValue("comfirmPassword", comfirmPassword)
+              }
               underlineColor={COLORS.primaryColor}
             />
-            <Button title="Sign Up" onPress={() => console.log("d")} />
+            <Text style={styles.errors}>{props.errors.comfirmPassword}</Text>
+
+            <Button title="Sign Up" onPress={props.handleSubmit} />
             <View>
               <TouchableOpacity
                 onPress={() => {
@@ -147,7 +154,7 @@ const styles = StyleSheet.create({
   title: {
     color: COLORS.white,
     fontSize: 25,
-    paddingVertical: 50,
+    paddingVertical: 19,
     paddingHorizontal: 20,
     fontFamily: "Karla-Regular",
     textAlign: "center",
@@ -161,8 +168,65 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 25,
     paddingTop: 50,
     alignContent: "center",
-    // borderTopLeftRadius: 20,
+  },
+  errors: {
+    fontFamily: "Karla-Regular",
+    color: "red",
   },
 });
 
-export default SignupScreen;
+export default withFormik({
+  mapPropsToValues: () => ({
+    username: "",
+    email: "",
+    password: "",
+    comfirmPassword: "",
+  }),
+  validate: (values, props) => {
+    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    const usernameRegex = /^[A-Za-z]+$/;
+    const passwordRegex = /((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/;
+    const errors = {};
+
+    // Username validator
+    if (!values.username) {
+      errors.username = "Username is required";
+    } else if (values.username.length < 4) {
+      errors.username = "Username must be atleast 4 characters";
+    } else if (!usernameRegex.test(values.username)) {
+      errors.username = "Username can only contain alphbet";
+    } else if (values.username.length >= 15) {
+      errors.username = "Username length is too much";
+    }
+
+    // Email validator
+    if (!values.email) {
+      errors.email = "Email is required";
+    } else if (!emailRegex.test(values.email)) {
+      errors.email = "Email is invalid";
+    }
+
+    // password Validator
+    if (!values.password) {
+      errors.password = "Password is required";
+    } else if (values.password.length < 6) {
+      errors.password = "Password must be atleast 6 characters";
+    } else if (!passwordRegex.test(values.password)) {
+      errors.password =
+        "Password shold contain atleast one number and one uppercase";
+    }
+
+    // comfirm password validator
+    if (!values.comfirmPassword) {
+      errors.comfirmPassword = "Comfirm password is required";
+    } else if (values.comfirmPassword !== values.password) {
+      errors.comfirmPassword = "Password comfirmation fail";
+    }
+    return errors;
+  },
+
+  handleSubmit: (values, { props }) => {
+    console.log(values);
+    console.log(props);
+  },
+})(SignupScreen);
