@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -23,10 +23,13 @@ const HomeScreen = ({ navigation }) => {
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
 
+  const bodyRef = useRef(null);
+
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === "ios");
     setDate(currentDate);
+    console.log(date);
   };
 
   const showMode = (currentMode) => {
@@ -65,6 +68,8 @@ const HomeScreen = ({ navigation }) => {
             <Input
               label="Title"
               name="account"
+              returnKeyType="next"
+              onSubmitEditing={() => bodyRef.current?.focus()}
               value={title}
               keyboardType="default"
               selectionColor={COLORS.primaryColor}
@@ -77,12 +82,14 @@ const HomeScreen = ({ navigation }) => {
               multiline={true}
               numberOfLines={4}
               value={body}
+              returnKeyType="done"
+              ref={bodyRef}
               selectionColor={COLORS.primaryColor}
               onChangeText={(text) => setBody(text)}
               underlineColor={COLORS.primaryColor}
             />
 
-            <Button title="Select Date" onPress={showDatepicker} />
+            <Button title="Add Date" onPress={showDatepicker} />
             {show && (
               <DateTimePicker
                 testID="dateTimePicker"

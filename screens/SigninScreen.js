@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -17,6 +17,7 @@ const SigninScreen = ({ navigation }) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const passwordRef = useRef(null);
 
   return (
     <KeyboardAvoidingView
@@ -43,6 +44,8 @@ const SigninScreen = ({ navigation }) => {
             duration={1500}
           >
             <Input
+              returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current?.focus()}
               label="Email"
               name="email"
               value={email}
@@ -53,18 +56,22 @@ const SigninScreen = ({ navigation }) => {
               underlineColor={COLORS.primaryColor}
             />
             <Input
+              ref={passwordRef}
               label="Password"
               name="lock"
               leftIcon={showPassword ? "eye" : "eye-off"}
               onPress={() => setShowPassword(!showPassword)}
               value={password}
               keyboardType="default"
+              maxLength={10}
+              minLength={6}
               //   textContentType="emailAddress"
               selectionColor={COLORS.primaryColor}
               secureTextEntry={!showPassword}
               onChangeText={(text) => setPassword(text)}
               underlineColor={COLORS.primaryColor}
             />
+            <Text>Error message here</Text>
             <Button
               title="Sign in"
               onPress={() => navigation.navigate("Home")}
@@ -82,7 +89,7 @@ const SigninScreen = ({ navigation }) => {
                     marginTop: 10,
                   }}
                 >
-                  Don't have an aacount yet? &nbsp; SignUp
+                  Don't have an acount yet? &nbsp; SignUp
                 </Text>
               </TouchableOpacity>
             </View>

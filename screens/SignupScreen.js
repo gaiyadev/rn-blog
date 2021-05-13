@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -21,6 +21,10 @@ const SignupScreen = ({ navigation }) => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showComfirmPassword, setShowComfirmPassword] = useState(false);
+
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const comfirmedPasswordRef = useRef(null);
 
   return (
     <KeyboardAvoidingView
@@ -47,6 +51,8 @@ const SignupScreen = ({ navigation }) => {
             duration={1500}
           >
             <Input
+              returnKeyType="next"
+              onSubmitEditing={() => emailRef.current?.focus()}
               label="Username"
               name="account"
               value={username}
@@ -58,6 +64,9 @@ const SignupScreen = ({ navigation }) => {
             />
             <Input
               label="Email"
+              ref={emailRef}
+              returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current?.focus()}
               name="email"
               value={email}
               keyboardType="email-address"
@@ -69,6 +78,9 @@ const SignupScreen = ({ navigation }) => {
             <Input
               label="Password"
               name="lock"
+              returnKeyType="next"
+              onSubmitEditing={() => comfirmedPasswordRef.current?.focus()}
+              ref={passwordRef}
               leftIcon={showPassword ? "eye" : "eye-off"}
               onPress={() => setShowPassword(!showPassword)}
               value={password}
@@ -81,6 +93,7 @@ const SignupScreen = ({ navigation }) => {
             />
 
             <Input
+              ref={comfirmedPasswordRef}
               label="Comfirm Password"
               name="lock"
               leftIcon={showComfirmPassword ? "eye" : "eye-off"}
@@ -107,7 +120,7 @@ const SignupScreen = ({ navigation }) => {
                     marginTop: 10,
                   }}
                 >
-                  already have an aacount? &nbsp; Signin
+                  already have an acount? &nbsp; Signin
                 </Text>
               </TouchableOpacity>
             </View>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -6,7 +6,6 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Keyboard,
-  TouchableOpacity,
 } from "react-native";
 import { COLORS } from "../constants/colors";
 import Input from "../components/Input";
@@ -19,6 +18,8 @@ const ChangePasswordScreen = ({ navigation }) => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showComfirmPassword, setShowComfirmPassword] = useState(false);
+
+  const comfirmedPasswordRef = useRef(null);
 
   return (
     <KeyboardAvoidingView
@@ -47,6 +48,8 @@ const ChangePasswordScreen = ({ navigation }) => {
             <Input
               label="Password"
               name="lock"
+              returnKeyType="next"
+              onSubmitEditing={() => comfirmedPasswordRef.current?.focus()}
               leftIcon={showPassword ? "eye" : "eye-off"}
               onPress={() => setShowPassword(!showPassword)}
               value={password}
@@ -61,6 +64,7 @@ const ChangePasswordScreen = ({ navigation }) => {
             <Input
               label="Comfirm Password"
               name="lock"
+              ref={comfirmedPasswordRef}
               leftIcon={showComfirmPassword ? "eye" : "eye-off"}
               onPress={() => setShowComfirmPassword(!showComfirmPassword)}
               value={comfirmPassword}

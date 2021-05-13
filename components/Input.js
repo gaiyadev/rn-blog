@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 import { StyleSheet } from "react-native";
 import { TextInput } from "react-native-paper";
 import { COLORS } from "../constants/colors";
 import { withTheme } from "react-native-paper";
 
-const Input = (props) => {
+const Input = forwardRef((props, ref) => {
   const {
     label,
     selectionColor,
@@ -23,6 +23,7 @@ const Input = (props) => {
 
   return (
     <TextInput
+      ref={ref}
       {...props}
       style={{
         marginVertical: 5,
@@ -60,7 +61,7 @@ const Input = (props) => {
       onChangeText={onChangeText}
     />
   );
-};
+});
 
 const styles = StyleSheet.create({});
 

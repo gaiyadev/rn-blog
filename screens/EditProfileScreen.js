@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -6,7 +6,6 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Keyboard,
-  TouchableOpacity,
 } from "react-native";
 import { COLORS } from "../constants/colors";
 import Input from "../components/Input";
@@ -16,6 +15,8 @@ import * as Animatable from "react-native-animatable";
 const EditProfileScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = React.useState("");
+
+  const emailRef = useRef(null);
 
   return (
     <KeyboardAvoidingView
@@ -43,6 +44,8 @@ const EditProfileScreen = ({ navigation }) => {
           >
             <Input
               label="Username"
+              returnKeyType="next"
+              onSubmitEditing={() => emailRef.current?.focus()}
               name="account"
               value={username}
               keyboardType="default"
@@ -55,6 +58,7 @@ const EditProfileScreen = ({ navigation }) => {
               label="Email"
               name="email"
               value={email}
+              ref={emailRef}
               keyboardType="email-address"
               textContentType="emailAddress"
               selectionColor={COLORS.primaryColor}
@@ -89,6 +93,7 @@ const styles = StyleSheet.create({
     paddingVertical: 50,
     paddingHorizontal: 20,
     fontFamily: "Karla-Regular",
+    textAlign: "center",
   },
   form: {
     elevation: 5,
