@@ -23,6 +23,7 @@ const Input = (props) => {
 
   return (
     <TextInput
+      {...props}
       style={{
         marginVertical: 5,
         borderColor: COLORS.primaryColor,

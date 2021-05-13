@@ -13,10 +13,9 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import * as Animatable from "react-native-animatable";
 
-const SigninScreen = ({ navigation }) => {
+const EditProfileScreen = ({ navigation }) => {
+  const [username, setUsername] = useState("");
   const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <KeyboardAvoidingView
@@ -34,7 +33,7 @@ const SigninScreen = ({ navigation }) => {
             animation="lightSpeedIn"
             duration={1500}
           >
-            <Text style={styles.title}>Sign in</Text>
+            <Text style={styles.title}>Update Profile</Text>
           </Animatable.View>
           {/* form */}
           <Animatable.View
@@ -42,6 +41,16 @@ const SigninScreen = ({ navigation }) => {
             animation="fadeInUpBig"
             duration={1500}
           >
+            <Input
+              label="Username"
+              name="account"
+              value={username}
+              keyboardType="default"
+              textContentType="username"
+              selectionColor={COLORS.primaryColor}
+              onChangeText={(text) => setUsername(text)}
+              underlineColor={COLORS.primaryColor}
+            />
             <Input
               label="Email"
               name="email"
@@ -52,41 +61,10 @@ const SigninScreen = ({ navigation }) => {
               onChangeText={(text) => setEmail(text)}
               underlineColor={COLORS.primaryColor}
             />
-            <Input
-              label="Password"
-              name="lock"
-              leftIcon={showPassword ? "eye" : "eye-off"}
-              onPress={() => setShowPassword(!showPassword)}
-              value={password}
-              keyboardType="default"
-              //   textContentType="emailAddress"
-              selectionColor={COLORS.primaryColor}
-              secureTextEntry={!showPassword}
-              onChangeText={(text) => setPassword(text)}
-              underlineColor={COLORS.primaryColor}
-            />
-            <Button
-              title="Sign in"
-              onPress={() => navigation.navigate("Home")}
-            />
-            <View>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("Signup");
-                }}
-              >
-                <Text
-                  style={{
-                    fontFamily: "Karla-Regular",
-                    fontSize: 13,
-                    marginTop: 10,
-                  }}
-                >
-                  Don't have an aacount yet? &nbsp; SignUp
-                </Text>
-              </TouchableOpacity>
-            </View>
+
+            <Button title="Update" onPress={() => console.log("d")} />
           </Animatable.View>
+          {/*  */}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -111,7 +89,6 @@ const styles = StyleSheet.create({
     paddingVertical: 50,
     paddingHorizontal: 20,
     fontFamily: "Karla-Regular",
-    textAlign: "center",
   },
   form: {
     elevation: 5,
@@ -126,4 +103,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SigninScreen;
+export default EditProfileScreen;

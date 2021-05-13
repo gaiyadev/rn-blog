@@ -17,9 +17,12 @@ import SplashScreen from "../screens/SplashScreen";
 import SigninScreen from "../screens/SigninScreen";
 import SignupScreen from "../screens/SignupScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import ChangePasswordScreen from "../screens/ChangePasswordScreen";
+import EditProfileScreen from "../screens/EditProfileScreen";
+
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../components/HeaderButton";
-import settingsPopupMenu from "../components/settingsPopupMenu";
+//import settingsPopupMenu from "../components/settingsPopupMenu";
 
 const Stack = createStackNavigator();
 
@@ -86,11 +89,46 @@ const AppScreens = () => {
         />
 
         <Stack.Screen
+          name="ChangePassword"
+          component={ChangePasswordScreen}
+          options={{
+            headerShown: true,
+            title: "",
+            headerStyle: {
+              elevation: 0,
+              backgroundColor: COLORS.primaryColor,
+            },
+            headerTintColor: COLORS.white,
+            headerTitleStyle: {
+              fontFamily: "Karla-Bold",
+              fontSize: 25,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfileScreen}
+          options={{
+            headerShown: true,
+            title: "",
+            headerStyle: {
+              elevation: 0,
+              backgroundColor: COLORS.primaryColor,
+            },
+            headerTintColor: COLORS.white,
+            headerTitleStyle: {
+              fontFamily: "Karla-Bold",
+              fontSize: 25,
+            },
+          }}
+        />
+
+        <Stack.Screen
           name="Profile"
           component={ProfileScreen}
           options={{
             headerShown: true,
-            title: "Codepedia",
+            title: "",
             headerStyle: {
               elevation: 0,
               backgroundColor: COLORS.primaryColor,
@@ -127,6 +165,14 @@ const AppScreens = () => {
                     navigation.navigate("Profile");
                   }}
                 ></Item>
+                <Item
+                  title="user"
+                  iconName="moon-outline"
+                  onPress={() => {
+                    console.log("dark mood");
+                    // navigation.navigate("Profile");
+                  }}
+                ></Item>
                 <View
                   style={{
                     elevation: 5,
@@ -154,7 +200,7 @@ const AppScreens = () => {
                     <MenuOptions>
                       <MenuOption
                         style={styles.container}
-                        onSelect={() => navigation.navigate("Account")}
+                        onSelect={() => navigation.navigate("Profile")}
                       >
                         <Text style={styles.title}>
                           <Icon
@@ -226,7 +272,8 @@ const AppScreens = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 9,
+    paddingHorizontal: 19,
+    paddingVertical: 12,
     elevation: 10,
     backgroundColor: COLORS.white,
   },
@@ -235,6 +282,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: "Karla-Regular",
+    color: COLORS.primaryColor,
     fontSize: 13,
   },
 });

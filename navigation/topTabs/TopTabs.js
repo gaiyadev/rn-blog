@@ -2,8 +2,10 @@ import * as React from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import HomeScreen from "../../screens/HomeScreen";
 import PostListScreen from "../../screens/PostListScreen";
+import MyPostsScreen from "../../screens/MyPostsScreen";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../../constants/colors";
+
 const Tab = createMaterialTopTabNavigator();
 
 function MyTabs() {
@@ -39,7 +41,7 @@ function MyTabs() {
               name={
                 Platform.OS === "android" ? "create-outline" : "create-outline"
               }
-              size={focused ? 26 : 25}
+              size={focused ? 26 : 22}
               color={focused ? COLORS.white : COLORS.inActive}
             />
           ),
@@ -54,7 +56,25 @@ function MyTabs() {
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name={Platform.OS === "android" ? "apps-outline" : "apps-outline"}
-              size={focused ? 26 : 25}
+              size={focused ? 26 : 22}
+              color={focused ? COLORS.white : COLORS.inActive}
+            />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="MyPost"
+        component={MyPostsScreen}
+        options={{
+          title: "My Posts",
+
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name={
+                Platform.OS === "android" ? "document-outline" : "apps-outline"
+              }
+              size={focused ? 26 : 22}
               color={focused ? COLORS.white : COLORS.inActive}
             />
           ),

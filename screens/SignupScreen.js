@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
     paddingVertical: 50,
     paddingHorizontal: 20,
     fontFamily: "Karla-Regular",
+    textAlign: "center",
   },
   form: {
     elevation: 5,

@@ -5,7 +5,7 @@ import { List, Divider } from "react-native-paper";
 
 import * as Animatable from "react-native-animatable";
 
-const PostListScreen = ({ navigation }) => {
+const MyPostsScreen = ({ navigation }) => {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <View style={styles.main}>
@@ -14,7 +14,7 @@ const PostListScreen = ({ navigation }) => {
           animation="lightSpeedIn"
           duration={1500}
         >
-          <Text style={styles.title}>All Posts </Text>
+          <Text style={styles.title}>Posts </Text>
         </Animatable.View>
         {/* form */}
         <Animatable.View
@@ -88,4 +88,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PostListScreen;
+export default MyPostsScreen;
