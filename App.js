@@ -1,11 +1,14 @@
 import "react-native-gesture-handler";
 import * as React from "react";
-import AppLoading from "expo-app-loading";
-import { useFonts } from "expo-font";
+import { Provider } from "react-redux";
 import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
+import store from "./redux/store/store";
+import { useFonts } from "expo-font";
+import AppLoading from "expo-app-loading";
+import { MenuProvider } from "react-native-popup-menu";
 import Navigator from "./navigation/routes";
 import { COLORS } from "./constants/colors";
-import { MenuProvider } from "react-native-popup-menu";
+// enableScreens(true);
 
 const theme = {
   ...DefaultTheme,
@@ -35,10 +38,12 @@ export default function App() {
     return <AppLoading />;
   }
   return (
-    <PaperProvider theme={theme}>
-      <MenuProvider>
-        <Navigator />
-      </MenuProvider>
-    </PaperProvider>
+    <Provider store={store}>
+      <PaperProvider theme={theme}>
+        <MenuProvider>
+          <Navigator />
+        </MenuProvider>
+      </PaperProvider>
+    </Provider>
   );
 }
