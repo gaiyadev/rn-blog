@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { COLORS } from "../constants/colors";
 import Input from "../components/Input";
@@ -74,7 +75,8 @@ const SigninScreen = (props) => {
               underlineColor={COLORS.primaryColor}
             />
             <Text style={styles.errors}>{props.errors.password}</Text>
-            <Button title="Sign in" onPress={props.handleSubmit} />
+            <ActivityIndicator size="large" color={COLORS.accentColor} />
+            <Button title={"Sign in"} onPress={props.handleSubmit} />
             <View>
               <TouchableOpacity
                 onPress={() => {

@@ -191,10 +191,10 @@ export default withFormik({
     // Username validator
     if (!values.username) {
       errors.username = "Username is required";
-    } else if (values.username.length < 4) {
+    } else if (values.username.trim().length < 4) {
       errors.username = "Username must be atleast 4 characters";
     } else if (!usernameRegex.test(values.username)) {
-      errors.username = "Username can only contain alphbet";
+      errors.username = "Username can only contain alphabet";
     } else if (values.username.length >= 15) {
       errors.username = "Username length is too much";
     }
