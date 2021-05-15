@@ -24,7 +24,6 @@ const postsReducer = (state = initialState, action) => {
       };
     case FETCH_ALL_USER_POSTS:
       const postData = action.posts;
-      console.log("UserPost", postData);
       return {
         ...state,
         userPosts: postData,

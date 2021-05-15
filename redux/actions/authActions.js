@@ -211,7 +211,6 @@ export const totalPosts = () => {
     }
     // success
     const resData = await response.json();
-    console.log(resData);
     dispatch({
       type: FETCH_ALL_USER_TOTAL_POSTS,
       totalPosts: resData.totalPosts,

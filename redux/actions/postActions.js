@@ -107,7 +107,6 @@ export const fetchUserPost = () => {
     }
     // success
     const resData = await response.json();
-    console.log("UserPosty", resData);
     dispatch({
       type: FETCH_ALL_USER_POSTS,
       posts: resData.notes,
@@ -168,7 +167,6 @@ export const fetchSinglePost = (_id) => {
     }
     // success
     const resData = await response.json();
-    console.log(">>>>", resData);
     dispatch({
       type: VIEW_SINGLE_POST,
       post: resData.item,
