@@ -19,6 +19,7 @@ import SignupScreen from "../screens/SignupScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import ChangePasswordScreen from "../screens/ChangePasswordScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
+import ViewSinglePostScreen from "../screens/ViewSinglePostScreen";
 
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../components/HeaderButton";
@@ -86,6 +87,24 @@ const AppScreens = () => {
               fontSize: 25,
             },
           }}
+        />
+
+        <Stack.Screen
+          name="Details"
+          component={ViewSinglePostScreen}
+          options={({ route }) => ({
+            title: route.params.title,
+            headerShown: true,
+            headerStyle: {
+              elevation: 0,
+              backgroundColor: COLORS.primaryColor,
+            },
+            headerTintColor: COLORS.white,
+            headerTitleStyle: {
+              fontFamily: "Karla-Bold",
+              fontSize: 25,
+            },
+          })}
         />
 
         <Stack.Screen

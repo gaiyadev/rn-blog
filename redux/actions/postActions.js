@@ -1,95 +1,30 @@
 import {
-  SIGN_IN,
-  SIGN_OUT,
-  SIGN_UP,
-  GET_PROFILE,
-  UPDATE_PROFILE,
-  FETCH_ALL_USER_TOTAL_POSTS,
-  CHANGE_PASSWORD,
+  ADD_POST,
+  FETCH_ALL_POSTS,
+  FETCH_ALL_USER_POSTS,
+  UPDATE_POST,
+  VIEW_SINGLE_POST,
 } from "../types/actionTypes";
 // where we sen http req
 const baseUrl = "https://note-expressjs-api.herokuapp.com/";
+
 const headers = {
   "Content-Type": "application/json",
 };
 
-export const signup = ({ username, email, password }) => {
-  return async (dispatch) => {
-    const response = await fetch(`${baseUrl}api/users/register`, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify({
-        username,
-        email,
-        password,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorResponse = await response.json();
-      const errorMsg = errorResponse.error;
-      let message = "Something went wrong";
-      if (errorMsg) {
-        message = errorMsg;
-      }
-
-      throw new Error(message);
-    }
-    // success
-    const resData = await response.json();
-    dispatch({
-      type: SIGN_UP,
-      user: resData.user,
-    });
-  };
-};
-
-// login
-export const signin = ({ email, password }) => {
-  return async (dispatch) => {
-    const response = await fetch(`${baseUrl}api/users/login`, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorResponse = await response.json();
-      const errorMsg = errorResponse.error;
-      let message = "Something went wrong";
-      if (errorMsg) {
-        message = errorMsg;
-      }
-      throw new Error(message);
-    }
-    // success
-    const resData = await response.json();
-    // console.log(resData);
-    dispatch({
-      type: SIGN_IN,
-      user: resData.user,
-      token: resData.token,
-    });
-  };
-};
-
-//Change password
-export const changePassword = ({ password, newPassword, comfirmPassword }) => {
+export const addPost = ({ title, body }) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(`${baseUrl}api/users/changePassword`, {
-      method: "PUT",
+
+    const response = await fetch(`${baseUrl}api/notes/add`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        password,
-        newPassword,
-        comfirmPassword,
+        title,
+        body,
       }),
     });
 
@@ -100,23 +35,23 @@ export const changePassword = ({ password, newPassword, comfirmPassword }) => {
       if (errorMsg) {
         message = errorMsg;
       }
+
       throw new Error(message);
     }
     // success
     const resData = await response.json();
+
     dispatch({
-      type: CHANGE_PASSWORD,
-      user: resData.user,
+      type: ADD_POST,
+      post: resData.note,
     });
   };
 };
 
-// update inot
-
-export const updateDetails = ({ username, email }) => {
+// updatepost
+export const updatePost = ({ title, body }) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    console.log("TOKeN", token);
     const response = await fetch(`${baseUrl}api/users/profile`, {
       method: "PUT",
       headers: {
@@ -124,14 +59,15 @@ export const updateDetails = ({ username, email }) => {
         authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        email,
-        username,
+        title,
+        body,
       }),
     });
 
     if (!response.ok) {
       const errorResponse = await response.json();
       const errorMsg = errorResponse.error;
+      console.log("ERROR", errorMsg);
       let message = "Something went wrong";
       if (errorMsg) {
         message = errorMsg;
@@ -142,26 +78,17 @@ export const updateDetails = ({ username, email }) => {
     const resData = await response.json();
     console.log(resData);
     dispatch({
-      type: UPDATE_PROFILE,
-      user: resData.user,
+      type: UPDATE_POST,
+      user: resData.note,
     });
   };
 };
 
-//logou
-export const signout = () => {
-  return async (dispatch, getState) => {
-    dispatch({
-      type: SIGN_OUT,
-    });
-  };
-};
-
-// get user info
-export const getUserInfo = () => {
+// all post
+export const fetchUserPost = () => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(`${baseUrl}api/users/user/profile`, {
+    const response = await fetch(`${baseUrl}api/notes/all/posts`, {
       method: "GET",
       headers: {
         authorization: `Bearer ${token}`,
@@ -171,6 +98,7 @@ export const getUserInfo = () => {
     if (!response.ok) {
       const errorResponse = await response.json();
       const errorMsg = errorResponse.error;
+      console.log("ERROR", errorMsg);
       let message = "Something went wrong";
       if (errorMsg) {
         message = errorMsg;
@@ -179,21 +107,19 @@ export const getUserInfo = () => {
     }
     // success
     const resData = await response.json();
-    const userData = Object.values(resData.user);
-
+    console.log("UserPosty", resData);
     dispatch({
-      type: GET_PROFILE,
-      user: userData,
+      type: FETCH_ALL_USER_POSTS,
+      posts: resData.notes,
     });
   };
 };
 
-//  getb all user Post
-
-export const totalPosts = () => {
+// all users post
+export const fetchPost = () => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(`${baseUrl}api/users/all/posts`, {
+    const response = await fetch(`${baseUrl}api/notes/`, {
       method: "GET",
       headers: {
         authorization: `Bearer ${token}`,
@@ -203,6 +129,7 @@ export const totalPosts = () => {
     if (!response.ok) {
       const errorResponse = await response.json();
       const errorMsg = errorResponse.error;
+      console.log("ERROR", errorMsg);
       let message = "Something went wrong";
       if (errorMsg) {
         message = errorMsg;
@@ -211,10 +138,40 @@ export const totalPosts = () => {
     }
     // success
     const resData = await response.json();
-    console.log(resData);
     dispatch({
-      type: FETCH_ALL_USER_TOTAL_POSTS,
-      totalPosts: resData.totalPosts,
+      type: FETCH_ALL_POSTS,
+      posts: resData.notes,
+    });
+  };
+};
+
+// all sinhle post by_id
+export const fetchSinglePost = (_id) => {
+  return async (dispatch, getState) => {
+    const token = getState().auth.token;
+    const response = await fetch(`${baseUrl}api/notes/${_id}`, {
+      method: "GET",
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      const errorMsg = errorResponse.error;
+      console.log("ERROR", errorMsg);
+      let message = "Something went wrong";
+      if (errorMsg) {
+        message = errorMsg;
+      }
+      throw new Error(message);
+    }
+    // success
+    const resData = await response.json();
+    console.log(">>>>", resData);
+    dispatch({
+      type: VIEW_SINGLE_POST,
+      post: resData.item,
     });
   };
 };

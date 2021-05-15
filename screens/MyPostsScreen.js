@@ -1,57 +1,68 @@
-import React, { useState } from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import React from "react";
+import { View, FlatList, Text, ScrollView, StyleSheet } from "react-native";
 import { COLORS } from "../constants/colors";
 import { List, Divider } from "react-native-paper";
-
+import { useSelector, useDispatch } from "react-redux";
 import * as Animatable from "react-native-animatable";
 
 const MyPostsScreen = ({ navigation }) => {
-  return (
-    <ScrollView style={{ flex: 1, backgroundColor: COLORS.white }}>
-      <View style={styles.main}>
-        <Animatable.View
-          style={styles.header}
-          animation="lightSpeedIn"
-          duration={1500}
-        >
-          <Text style={styles.title}>Posts </Text>
-        </Animatable.View>
-        {/* form */}
-        <Animatable.View
-          style={styles.form}
-          animation="fadeInUpBig"
-          duration={1500}
-        >
-          <View
-            style={{
-              flex: 1,
-            }}
-          >
-            <List.Item
-              onPress={() => {
-                console.log("details");
-              }}
-              title="Post Title"
-              description="Item description"
-              right={(props) => (
-                <List.Icon {...props} icon="eye" color={COLORS.primaryColor} />
-              )}
-            />
-            <Divider />
-            <List.Item
-              onPress={() => {
-                console.log("details");
-              }}
-              title="Post Title"
-              description="Item description"
-              right={(props) => (
-                <List.Icon {...props} icon="eye" color={COLORS.primaryColor} />
-              )}
-            />
-          </View>
-        </Animatable.View>
+  // const dispatch = useDispatch();
+  const posts = useSelector((state) => state.posts.userPosts);
+
+  React.useEffect(() => {
+    console.log("PS", posts);
+  }, []);
+  const renderItemDoc = (itemData) => {
+    return (
+      <View>
+        <List.Item
+          onPress={() => {
+            navigation.navigate("Details", {
+              _id: itemData.item._id,
+              title: itemData.item.title,
+              body: itemData.item.body,
+              createdAt: itemData.item.createdAt,
+            });
+          }}
+          title={itemData.item.title}
+          description={itemData.item.body}
+          right={(props) => (
+            <List.Icon {...props} icon="eye" color={COLORS.primaryColor} />
+          )}
+        />
+        <Divider />
       </View>
-    </ScrollView>
+    );
+  };
+
+  return (
+    <View style={styles.main}>
+      <Animatable.View
+        style={styles.header}
+        animation="lightSpeedIn"
+        duration={1500}
+      >
+        <Text style={styles.title}>Posts </Text>
+      </Animatable.View>
+      {/* form */}
+      <Animatable.View
+        style={styles.form}
+        animation="fadeInUpBig"
+        duration={1500}
+      >
+        <View
+          style={{
+            flex: 1,
+          }}
+        >
+          <FlatList
+            data={posts}
+            keyExtractor={(item) => item._id}
+            renderItem={renderItemDoc}
+          />
+        </View>
+      </Animatable.View>
+    </View>
   );
 };
 

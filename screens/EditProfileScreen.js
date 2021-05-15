@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,16 +6,35 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Keyboard,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { COLORS } from "../constants/colors";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import * as Animatable from "react-native-animatable";
-import { withFormik } from "formik";
+import { Formik } from "formik";
+import { updateDetails, getUserInfo } from "../redux/actions/authActions";
+import * as Yup from "yup";
+const usernameRegex = /^[A-Za-z]+$/;
+const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+import { useSelector, useDispatch } from "react-redux";
+
 const EditProfileScreen = (props) => {
   const { navigation } = props;
-
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
   const emailRef = useRef(null);
+
+  const getUser = useSelector((state) => state.auth.userDetails);
+  const [_id, username, email] = getUser;
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert("Error", error, [{ text: "Okay" }]);
+    }
+  }, [error]);
 
   return (
     <KeyboardAvoidingView
@@ -36,41 +55,88 @@ const EditProfileScreen = (props) => {
             <Text style={styles.title}>Update Profile</Text>
           </Animatable.View>
           {/* form */}
-          <Animatable.View
-            style={styles.form}
-            animation="fadeInUpBig"
-            duration={1500}
-          >
-            <Input
-              label="Username"
-              returnKeyType="next"
-              onSubmitEditing={() => emailRef.current?.focus()}
-              name="account"
-              keyboardType="default"
-              textContentType="username"
-              selectionColor={COLORS.primaryColor}
-              onChangeText={(username) =>
-                props.setFieldValue("username", username)
+
+          <Formik
+            initialValues={{
+              username: username,
+              email: email,
+            }}
+            validationSchema={Yup.object({
+              username: Yup.string()
+                .min(4, "Username must be atleast 4 characters")
+                .max(20, "Username is too Long!")
+                .matches(
+                  usernameRegex,
+                  "Only alphabets are allowed for this field "
+                )
+                .required("Username is required"),
+
+              email: Yup.string()
+                .email("Email is invalid")
+                .matches(emailRegex, "Email is invalid ")
+                .required("Email is required"),
+            })}
+            onSubmit={async (values) => {
+              setError(null);
+              setIsLoading(true);
+              try {
+                await dispatch(updateDetails(values));
+                setIsLoading(false);
+                Alert.alert("Success", "Account updated successfuly", [
+                  { text: "Okay", onPress: () => console.log("OK Pressed") },
+                ]);
+                await dispatch(getUserInfo());
+              } catch (err) {
+                setError(err.message);
+                setIsLoading(false);
               }
-              underlineColor={COLORS.primaryColor}
-            />
-            <Text style={styles.errors}>{props.errors.username}</Text>
-
-            <Input
-              label="Email"
-              name="email"
-              ref={emailRef}
-              keyboardType="email-address"
-              textContentType="emailAddress"
-              selectionColor={COLORS.primaryColor}
-              onChangeText={(email) => props.setFieldValue("email", email)}
-              underlineColor={COLORS.primaryColor}
-            />
-            <Text style={styles.errors}>{props.errors.email}</Text>
-
-            <Button title="Update" onPress={props.handleSubmit} />
-          </Animatable.View>
-          {/*  */}
+            }}
+          >
+            {(props) => (
+              <Animatable.View
+                style={styles.form}
+                animation="fadeInUpBig"
+                duration={1500}
+              >
+                <Input
+                  label="Username"
+                  returnKeyType="next"
+                  onSubmitEditing={() => emailRef.current?.focus()}
+                  name="account"
+                  onChangeText={props.handleChange("username")}
+                  onBlur={props.handleBlur("username")}
+                  value={props.values.username}
+                  keyboardType="default"
+                  textContentType="username"
+                  selectionColor={COLORS.primaryColor}
+                  onChangeText={(username) =>
+                    props.setFieldValue("username", username)
+                  }
+                  underlineColor={COLORS.primaryColor}
+                />
+                <Text style={styles.errors}>{props.errors.username}</Text>
+                <Input
+                  label="Email"
+                  name="email"
+                  onChangeText={props.handleChange("email")}
+                  onBlur={props.handleBlur("email")}
+                  value={props.values.email}
+                  ref={emailRef}
+                  keyboardType="email-address"
+                  textContentType="emailAddress"
+                  selectionColor={COLORS.primaryColor}
+                  onChangeText={(email) => props.setFieldValue("email", email)}
+                  underlineColor={COLORS.primaryColor}
+                />
+                <Text style={styles.errors}>{props.errors.email}</Text>
+                {isLoading ? (
+                  <ActivityIndicator size="large" color={COLORS.accentColor} />
+                ) : (
+                  <Button title="Update" onPress={props.handleSubmit} />
+                )}
+              </Animatable.View>
+            )}
+          </Formik>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -114,39 +180,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withFormik({
-  mapPropsToValues: () => ({
-    username: "",
-    email: "",
-  }),
-  validate: (values, props) => {
-    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
-    const usernameRegex = /^[A-Za-z]+$/;
-    const errors = {};
-
-    // Username validator
-    if (!values.username) {
-      errors.username = "Username is required";
-    } else if (values.username.length < 4) {
-      errors.username = "Username must be atleast 4 characters";
-    } else if (!usernameRegex.test(values.username)) {
-      errors.username = "Username can only contain alphbet";
-    } else if (values.username.length >= 15) {
-      errors.username = "Username length is too much";
-    }
-
-    // Email validator
-    if (!values.email) {
-      errors.email = "Email is required";
-    } else if (!emailRegex.test(values.email)) {
-      errors.email = "Email is invalid";
-    }
-
-    return errors;
-  },
-
-  handleSubmit: (values, { props }) => {
-    console.log(values);
-    console.log(props);
-  },
-})(EditProfileScreen);
+export default EditProfileScreen;

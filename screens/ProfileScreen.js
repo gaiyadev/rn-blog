@@ -2,11 +2,19 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { COLORS } from "../constants/colors";
 import { Avatar, List } from "react-native-paper";
+import { signout } from "../redux/actions/authActions";
+import { useSelector, useDispatch } from "react-redux";
 
 import * as Animatable from "react-native-animatable";
 
 const ProfileScreen = (props) => {
   const { navigation } = props;
+  const dispatch = useDispatch();
+  const getUser = useSelector((state) => state.auth.userDetails);
+  const [_id, username, email] = getUser;
+  const av = username.slice(0, 2).toUpperCase();
+  const totalPosts = useSelector((state) => state.auth.totalNumPost);
+
   return (
     <ScrollView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <Animatable.View style={styles.main}>
@@ -26,7 +34,7 @@ const ProfileScreen = (props) => {
               color: COLORS.primaryColor,
             }}
             size={80}
-            label="GO"
+            label={av}
           />
           <View style={{ justifyContent: "space-around" }}>
             <Text
@@ -40,14 +48,14 @@ const ProfileScreen = (props) => {
                 fontFamily: "Karla-Regular",
               }}
             >
-              gaiyadev@yahoo.com
+              {email}
             </Text>
           </View>
           <View
             style={{ flexDirection: "row", justifyContent: "space-around" }}
           >
-            <Text style={styles.title}>gaiyadev</Text>
-            <Text style={styles.title}>48 Posts</Text>
+            <Text style={styles.title}> {username} </Text>
+            <Text style={styles.title}> {totalPosts} Posts</Text>
           </View>
         </Animatable.View>
 
@@ -82,9 +90,17 @@ const ProfileScreen = (props) => {
           />
 
           <List.Item
-            onPress={() => {
-              // navigation.navigate("EditProfile");
-              console.log("Logout");
+            onPress={async () => {
+              try {
+                await dispatch(signout());
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: "Signin" }],
+                });
+                // navigation.navigate("Signin");
+              } catch (error) {
+                console.log(error.message);
+              }
             }}
             title="Logout"
             left={(props) => (
