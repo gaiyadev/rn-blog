@@ -1,9 +1,10 @@
 import React from "react";
-import { View, FlatList, Text, ScrollView, StyleSheet } from "react-native";
+import { View, FlatList, Text, StyleSheet } from "react-native";
 import { COLORS } from "../constants/colors";
 import { List, Divider } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
 import * as Animatable from "react-native-animatable";
+import {Swipeable} from "react-native-gesture-handler";
 
 const MyPostsScreen = ({ navigation }) => {
   // const dispatch = useDispatch();
@@ -12,26 +13,86 @@ const MyPostsScreen = ({ navigation }) => {
   React.useEffect(() => {
     console.log("PS", posts);
   }, []);
+
+  const LeftSwipeActions = () => {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "#ccffbd",
+          justifyContent: "center",
+        }}
+      >
+        <Text
+          style={{
+            color: "#40394a",
+            paddingHorizontal: 10,
+            fontWeight: "600",
+            paddingHorizontal: 30,
+            paddingVertical: 20,
+          }}
+        >
+          Bookmark
+        </Text>
+      </View>
+    );
+  };
+  const rightSwipeActions = () => {
+    return (
+      <View
+        style={{
+          backgroundColor: "#ff8303",
+          justifyContent: "center",
+          alignItems: "flex-end",
+        }}
+      >
+        <Text
+          style={{
+            color: "#1b1a17",
+            paddingHorizontal: 10,
+            fontWeight: "600",
+            paddingHorizontal: 30,
+            paddingVertical: 20,
+          }}
+        >
+          Delete
+        </Text>
+      </View>
+    );
+  };
+  const swipeFromLeftOpen = () => {
+    alert("Swipe from left");
+  };
+  const swipeFromRightOpen = () => {
+    alert("Swipe from right");
+  };
   const renderItemDoc = (itemData) => {
     return (
-      <View>
-        <List.Item
-          onPress={() => {
-            navigation.navigate("Details", {
-              _id: itemData.item._id,
-              title: itemData.item.title,
-              body: itemData.item.body,
-              createdAt: itemData.item.createdAt,
-            });
-          }}
-          title={itemData.item.title}
-          description={itemData.item.body}
-          right={(props) => (
-            <List.Icon {...props} icon="eye" color={COLORS.primaryColor} />
-          )}
-        />
-        <Divider />
-      </View>
+      <Swipeable
+        renderLeftActions={LeftSwipeActions}
+        renderRightActions={rightSwipeActions}
+        onSwipeableRightOpen={swipeFromRightOpen}
+        onSwipeableLeftOpen={swipeFromLeftOpen}
+      >
+        <View>
+          <List.Item
+            onPress={() => {
+              navigation.navigate("Details", {
+                _id: itemData.item._id,
+                title: itemData.item.title,
+                body: itemData.item.body,
+                createdAt: itemData.item.createdAt,
+              });
+            }}
+            title={itemData.item.title}
+            description={itemData.item.body}
+            right={(props) => (
+              <List.Icon {...props} icon="eye" color={COLORS.primaryColor} />
+            )}
+          />
+          <Divider />
+        </View>
+      </Swipeable>
     );
   };
 
