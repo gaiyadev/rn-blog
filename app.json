@@ -1,9 +1,10 @@
 {
   "expo": {
-    "name": "rn-paper-app",
-    "slug": "rn-paper-app",
+    "name": "rn-blog-app",
+    "slug": "rn-blog-app",
     "version": "1.0.0",
     "orientation": "portrait",
+    "description": "blog app",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
@@ -17,13 +18,17 @@
       "**/*"
     ],
     "ios": {
+       "bundleIdentifier": "com.ng.gaiyaobed.rn-blog-app",
+      "buildNumber": "1.0.0",
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+       "package": "com.ng.gaiyaobed.rn_blog_app",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
