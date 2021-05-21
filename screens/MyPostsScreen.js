@@ -4,7 +4,8 @@ import { COLORS } from "../constants/colors";
 import { List, Divider } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
 import * as Animatable from "react-native-animatable";
-import {Swipeable} from "react-native-gesture-handler";
+import { Swipeable } from "react-native-gesture-handler";
+import { Ionicons } from "@expo/vector-icons";
 
 const MyPostsScreen = ({ navigation }) => {
   // const dispatch = useDispatch();
@@ -41,31 +42,30 @@ const MyPostsScreen = ({ navigation }) => {
     return (
       <View
         style={{
-          backgroundColor: "#ff8303",
+          backgroundColor: "#efefef",
           justifyContent: "center",
-          alignItems: "flex-end",
+          alignItems: "center",
+          padding: 33,
         }}
       >
-        <Text
-          style={{
-            color: "#1b1a17",
-            paddingHorizontal: 10,
-            fontWeight: "600",
-            paddingHorizontal: 30,
-            paddingVertical: 20,
-          }}
-        >
-          Delete
-        </Text>
+        <Ionicons
+          name={Platform.OS === "android" ? "trash-outline" : "create-outline"}
+          size={25}
+          color="red"
+        />
       </View>
     );
   };
+
   const swipeFromLeftOpen = () => {
-    alert("Swipe from left");
+    console.log("Boomak");
   };
+
+  // Delete Handler
   const swipeFromRightOpen = () => {
-    alert("Swipe from right");
+    console.log("deleting");
   };
+
   const renderItemDoc = (itemData) => {
     return (
       <Swipeable
